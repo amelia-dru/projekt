@@ -1,0 +1,283 @@
+#dziennik
+import random
+
+from rich.console import Console
+console = Console()
+
+dziennik = {
+    'olek': [4, 5, 5, 5, 2],
+    'anna': [6, 4, 5, 3, 5],
+    'marek': [3, 3, 4, 2, 6],
+    'kasia': [5, 5, 5, 4, 5],
+    'piotr': [6, 6, 6, 6, 6],
+    'ewa': [3, 4, 4, 5, 3],
+    'tomek': [4, 3, 5, 6, 4],
+    'zuzanna': [2, 2, 4, 3, 5],
+    'kamil': [5, 4, 5, 4, 5],
+    'julia': [6, 6, 5, 5, 6],
+    'paweł': [4, 4, 3, 4, 2],
+    'weronika': [5, 5, 4, 5, 5],
+    'michał': [6, 5, 6, 4, 4],
+    'wiktoria': [3, 2, 4, 3, 3],
+    'adam': [5, 6, 4, 4, 5],
+    'magda': [4, 4, 5, 4, 4],
+    'jakub': [6, 5, 5, 6, 6],
+    'karolina': [3, 4, 3, 5, 4],
+    'dominik': [5, 4, 6, 4, 3],
+    'henryk': [1, 1, 1, 2, 1]
+}
+#list of words and categories that are used for the game "wisielec" additionaly 
+zwierzeta = ["słoń", "tygrys", "delfin", "zyrafa", "koliber", "kangur", "panda", "wilk", "rekin", "łabędź"]
+
+jedzenie = ["pomidor", "makaron", "truskawka", "pizza", "pierogi", "hamburger", "chleb", "lody", "banan", "kiełbasa"]
+
+kraje = ["polska", "japonia", "brazylia", "norwegia", "australia", "hiszpania", "kanada", "indie", "rosja", "egipt"]
+
+sporty = ["piłka nozna", "koszykówka", "tenis", "siatkówka", "szermierka", "hokej", "rugby", "golf", "łucznictwo", "boks"]
+
+filmy_seriale = ["avengers", "shrek", "titanik", "harry potter", "gra o tron", "matrix", "władca pierścieni", "wiedźmin", "minionki", "król lew"]
+#ascii artworks used for "wisielec"
+etapy_wisielca = [
+    """
+       -----
+       |   |
+           |
+           |
+           |
+           |
+    =========
+    """,
+    """
+       -----
+       |   |
+       O   |
+           |
+           |
+           |
+    =========
+    """,
+    """
+       -----
+       |   |
+       O   |
+       |   |
+           |
+           |
+    =========
+    """,
+    """
+       -----
+       |   |
+       O   |
+      /|   |
+           |
+           |
+    =========
+    """,
+    """
+       -----
+       |   |
+       O   |
+      /|\\  |
+           |
+           |
+    =========
+    """,
+    """
+       -----
+       |   |
+       O   |
+      /|\\  |
+      /    |
+           |
+    =========
+    """,
+    """
+       -----
+       |   |
+       O   |
+      /|\\  |
+      / \\  |
+           |
+    =========
+    """
+]
+#the categories from above listed out so the code can pick from them
+kategorie = ['zwierzeta', 'jedzenie', 'kraje', 'sporty', 'filmy_seriale']
+
+def wisielec():
+    console.print('---->[bold][on magenta]Zagrajmy w wisielca![white]<----')
+    print(etapy_wisielca[0])
+    print('ps. jezeli będziesz chciał przerwać grę napisz "stop" ')
+#code for picking the categories and subcategories listed above
+    wylosowana_kategoria = random.choice(kategorie)
+
+    if wylosowana_kategoria == 'zwierzeta':
+        slowo = random.choice(zwierzeta)
+    elif wylosowana_kategoria == 'jedzenie':
+        slowo = random.choice(jedzenie)
+    elif wylosowana_kategoria == 'kraje':
+        slowo = random.choice(kraje)
+    elif wylosowana_kategoria == 'sporty':
+        slowo = random.choice(sporty)
+    elif wylosowana_kategoria == 'filmy_seriale':
+        slowo = random.choice(filmy_seriale)
+#main code for displayed text, the picked categories, game info, and blank spaces
+#as well as most of the game functionality, like checking for correct letters of the words and printing out the wisielec ascii art accordingly
+    wykorzystane_litery = []
+    podloga = ['_'] * len(slowo)
+    bledy = 0
+    while True:
+        print(' '.join(podloga))
+        print('')
+        console.print(f'Wylosowana kategoria to: [yellow]{wylosowana_kategoria}')
+        literka = input('Podaj literę: ').lower()
+        wykorzystane_litery.append(literka)
+        if literka in slowo:
+            for liczba, wartosc in enumerate(slowo):
+                if wartosc == literka:
+                    podloga[liczba] = literka
+        elif literka not in slowo:
+            bledy = bledy + 1
+            print(etapy_wisielca[bledy])
+            console.print(f'[bold][red]Uwazaj to twój {bledy}/6 błąd!')
+            if bledy == 6:
+                console.print('[on red]Koniec gry, przegrałeś')
+                console.print(f'Twoje hasło to [on red]{slowo}')
+                break 
+        if ''.join(podloga) == slowo:
+            console.print(f'[white]Twoje hasło to: [magenta]{''.join(podloga)}')
+            console.print('[on green]Woo wygrałeś')
+            input('Nciśnij enter')
+            break
+        if literka == 'stop':
+            break
+        print('Wykorzystane litery: ')
+        print(', '.join(wykorzystane_litery))
+#the lines of questions needed to know which elements of the dziennik (aka school register) to print out and what questions to ask next
+#this question will direct you to adding a student or a grade
+def dodawanie_do_listy():
+    pytanie = console.input(f'[bold]Chcesz dodac uzytkownika do dziennika czy ocenę? 1.Dodaj uzytkownika/2.Dodaj ocene').lower()
+    #this part is for adding students to the register
+    if pytanie == '1':
+        zapytanie_o_imie = input('Podaj imię osoby: ').lower()
+        #if the person is already in the register it will ask if you want to add a grade for that student, if no it will direct you back
+        if zapytanie_o_imie in dziennik:
+            console.print('[bold green] Osoba juz znajduje się w dzienniku.')
+            pytanie_o_dodanie_oceny = input(f'Czy chcesz dodać ocenę dla uzytkownika {zapytanie_o_imie}? 1.Tak/2.Nie')
+            
+            if pytanie_o_dodanie_oceny == '1':
+                ocena = int(input(f'Podaj ocenę dla uzytkownika {zapytanie_o_imie}: '))
+                if ocena >= 0 and ocena <= 6:
+                    bez_nawiasow = ''
+                    bez_nawiasow += ','.join(map(str, dziennik[zapytanie_o_imie]))
+                    console.print(f'[white]{zapytanie_o_imie} {bez_nawiasow} [bold green]+{ocena}')
+                    dziennik[zapytanie_o_imie].append(ocena)
+                    console.print(f'[on green]Ocena dla uzytkownika {zapytanie_o_imie} została pomyślnie dodana!')
+                elif ocena < 0  or ocena >= 7:
+                    console.print(f'[on magenta]Mozesz dodawać oceny w przedziale <0,6>.')
+            
+            elif pytanie_o_dodanie_oceny == '2':
+                bez_nawiasow = ','.join(map(str, dziennik[zapytanie_o_imie]))
+                console.print(f'[green]{zapytanie_o_imie}: {bez_nawiasow}')
+        #this code will add the new student and ask for/add their grades
+        elif zapytanie_o_imie not in dziennik:
+            pytanie_o_ocene = int(input(f'Podaj ocenę dla uzytkownika {zapytanie_o_imie}: '))
+            if pytanie_o_ocene >= 0 and pytanie_o_ocene <= 6:
+                dziennik[zapytanie_o_imie] = [pytanie_o_ocene]
+                console.print(f'[on yellow]Ocena dla uzytkownika {zapytanie_o_imie} została pomyślnie dodana!')
+            elif pytanie_o_ocene < 0 or pytanie_o_ocene >=7:
+                console.print(f'[on magenta]Mozesz dodawać oceny w przedziale <0,6>.')
+    #this part is for adding grades to the register
+    if pytanie == '2':
+        imie = input('Podaj imię uzytkownika, dla którego mam dodac ocenę: ').lower()
+    #if the name is in the register, this will let you add a grade between 0 and 6
+        if imie in dziennik:
+            ocena = int(input(f'Podaj ocenę dla uztkowinika {imie}: '))
+            if ocena >= 0 and ocena <=6:
+                bez_nawiasow = ','.join(map(str, dziennik[imie]))
+                console.print(f'[white]{imie}: {bez_nawiasow}[/white] [green]+{ocena}')
+                dziennik[imie].append(ocena)
+            elif ocena < 0 or ocena >= 7:
+                console.print(f'[on magenta]Mozesz dodawać oceny w przedziale <0,6>.')
+        #if the person is not in the register, this it will ask for their name and  allow for grades to be added
+        if imie not in dziennik:
+            console.print(f'[red]Uzytkownik {imie} nie znajduje się w dzienniku.')
+            pytanko = input(f'Chcesz dodać uytkownika {imie} do dziennika? 1.Tak/2.Nie')
+            if pytanko == '1':
+                ocenka = int(input(f'Podaj ocenę dla uzytkownika {imie}: '))
+                if ocenka >=0 and ocenka <= 6:
+                    dziennik[imie] = [ocenka]
+                    console.print(f'[on yellow]Ocena dla uzytkownika {imie} została pomyślnie dodana!')
+                elif ocenka < 0 or ocenka >= 7:
+                    console.print(f'[on magenta]Mozesz dodawać oceny w przedziale <0,6>.')
+            elif pytanko == '2':
+                console.print('[yellow]okk...')
+#questions and code for deleting an element from the register
+def usuwanie_z_listy():
+    pytanie = console.input('[yellow]Chcesz usuąć uzytkownika czy ocenę?  1.Usuń uzytkownika/2.Usuń ocenę')
+    #this code is for deleteing a student from the register and will either delete them or let you know they arent in the register
+    if pytanie == '1':
+        imie = input('Podaj imię uzytkownika, którego mam wykreślić z dziennika: ').lower()
+        if imie in dziennik:
+            console.print(f'[bold red]Uzytkownik {imie} zostal wykreślony z dziennika.')
+            del dziennik[imie]
+        elif imie not in dziennik:
+            console.print(f'[bold on red]Uzytkownika {imie} nie ma w dzienniku.')
+   #this code will remove grades from a student between 0 and 6 
+    #if the grade provided will be wrong, or the student wont be there, it will let you know
+    elif pytanie == '2':
+        imiee = input('Podaj imię uzytkownika: ').lower()
+        if imiee in dziennik:
+            ocena = int(input('Podaj ocenę jaką mam wykreślić: '))
+            if ocena >= 0 and ocena <=6:
+                if ocena in dziennik[imiee]:
+                    dziennik[imiee].remove(ocena)
+                    bez_nawiasow = ','.join(map(str, dziennik[imiee]))
+                    console.print(f'[cyan]{imiee}: {bez_nawiasow}, [red]-{ocena}')
+            elif ocena < 0 or ocena >= 7:
+                console.print(f'[on magenta]Mozesz usuwac oceny w przedziale <0,6>.')
+        if imiee not in dziennik:
+            console.print(f'[on red]Uzytkownik {imiee} nie znajduje sie w dzienniku/')
+#this is for showing the list of all grades
+def wyswietlanie_listy():
+    pytanie = input('Chcesz wyświetlić listę ocen wszystkich uzytkownikow czy jednego uzytkownika? 1.Lista wszystkich uzytkownikow/2.Jednego uzytkownika')
+    #this part will only show you one of the students grades from the list
+    if pytanie == '1':
+        imie = input('Podaj imię uzytkownika, dla którego mam wyświetlić oceny: ')
+        bez_nawiasow = ','.join(map(str, dziennik[imie]))
+        srednia = sum(dziennik[imie]) / len(dziennik[imie])
+        console.print(f'[bold magenta]{imie}: {bez_nawiasow} [bold blue]średnia:{srednia}')
+        input('Naciśnij ENTER')
+    #this part will show you all of the students grades
+    elif pytanie == '2':
+        for i, (osoba, ocena) in enumerate(dziennik.items(), start = 1):
+            srednia = sum(ocena) / len(ocena)
+            console.print(f'[blue]{i}. [bold cyan]{osoba}: {','.join(map(str, ocena))} [yellow] śrendia: {srednia}')
+            input('Naciśnij ENTER')
+#this will save changes made to the register as a txt file
+def zapisz_plik(dziennik):
+    with open('dziennik.txt', 'w') as plik:
+        for osoba, ocena in dziennik.items():
+            oceny_str = ','.join(map(str, ocena))
+            srednia = sum(ocena) / len(ocena)
+            plik.write(f'{osoba}: {oceny_str} srednia: {srednia}\n')
+    console.print('[green]Plik został pomyślnie zapisany w pliku tekstowym.')
+    input('Naciśnij ENTER')
+#the first menu you will see with listed options which will lead to one of the functions from above, as well as an option to turn off the program
+while True:
+    console.print('[on magenta]----DZIENNIK----')
+    console.print(f'[yellow]1. Dodaj do listy\n[cyan]2. Usuń z listy\n[yellow]3. Pokaz listę\n[cyan]4.Zapisz listę w pliku tekstowym\n[yellow]5. Chwila przerwy, zagrajmy w wisielca!\n[cyan]6. Koniec')
+    pytanie_wstepne = console.input('[bold on cyan]Wybierz opcje: ')
+    if pytanie_wstepne == '1':
+        dodawanie_do_listy()
+    elif pytanie_wstepne == '2':
+        usuwanie_z_listy()
+    elif pytanie_wstepne == '3':
+        wyswietlanie_listy()
+    elif pytanie_wstepne == '4':
+        zapisz_plik(dziennik)
+    elif pytanie_wstepne == '5':
+        wisielec()
+    elif pytanie_wstepne == '6':
+        break
